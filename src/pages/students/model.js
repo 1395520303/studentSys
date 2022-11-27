@@ -1,4 +1,11 @@
-import { editRecord, getStudentList, deleteRecord } from './service';
+import {
+  editRecord,
+  getStudentList,
+  deleteRecord,
+  addRecord,
+  logIn,
+} from './service';
+import { routerRedux } from 'dva/router';
 export default {
   namespace: 'students',
   state: {},
@@ -8,6 +15,13 @@ export default {
     },
   },
   effects: {
+    *login({ payload: values }, { put, call }) {
+      // Call saveTodoToServer, then trigger `add` action to save data
+      const { msg, name } = yield call(logIn, { values });
+      if (msg == 'login!') {
+        yield put(routerRedux.push('/student'));
+      }
+    },
     *save({ payload: todo }, { put, call }) {
       // Call saveTodoToServer, then trigger `add` action to save data
       const { data } = yield call(getStudentList);
@@ -18,6 +32,11 @@ export default {
       const { data } = yield call(editRecord, { id, values });
       yield put({ type: 'add', payload: data });
     },
+    *addNew({ payload: { values } }, { put, call }) {
+      // Call saveTodoToServer, then trigger `add` action to save data
+      const { data } = yield call(addRecord, { values });
+      yield put({ type: 'add', payload: data });
+    },
     *delete({ payload: { id } }, { put, call }) {
       // Call saveTodoToServer, then trigger `add` action to save data
       const { data } = yield call(deleteRecord, { id });
@@ -26,9 +45,8 @@ export default {
   },
   subscriptions: {
     setup({ history, dispatch }) {
-      // Subscribe history(url) change, trigger `load` action if pathname is `/`
       return history.listen(({ pathname }) => {
-        if (pathname === '/') {
+        if (pathname === '/student') {
           dispatch({ type: 'save' });
         }
       });

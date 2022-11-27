@@ -4,10 +4,9 @@ const StudentModal = (props) => {
   const [form] = Form.useForm();
   useEffect(() => {
     form.setFieldsValue(props.record);
-  }, [props.open]);
-
+  });
   const onFinishFailed = (values) => {
-    console.log('Success:', values);
+    console.log('failed:', values);
   };
   const onOk = () => {
     form.submit();
@@ -15,7 +14,7 @@ const StudentModal = (props) => {
   return (
     <>
       <Modal
-        title="Basic Modal"
+        title={props.modalTitle}
         open={props.open}
         onOk={onOk}
         onCancel={props.handleCancel}
@@ -31,7 +30,19 @@ const StudentModal = (props) => {
           <Form.Item label="Name" name="name">
             <Input />
           </Form.Item>
+          <Form.Item label="Password" name="password">
+            <Input />
+          </Form.Item>
           <Form.Item label="Email" name="email">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Phone" name="phone">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Title" name="title">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Role" name="role">
             <Input />
           </Form.Item>
         </Form>

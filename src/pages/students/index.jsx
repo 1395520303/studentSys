@@ -1,4 +1,4 @@
-import { Space, Table, Tag } from 'antd';
+import { Space, Table, Button } from 'antd';
 import StudentModal from './components/StudentModal';
 import ConfirmModal from './components/ConfirmModal';
 import { connect } from 'umi';
@@ -7,20 +7,34 @@ import React, { useState } from 'react';
 const index = ({ students, dispatch }) => {
   const columns = [
     {
-      title: 'Id',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: 'password',
+      dataIndex: 'password',
+      key: 'password',
     },
     {
       title: 'email',
       dataIndex: 'email',
       key: 'email',
+    },
+    {
+      title: 'phone',
+      dataIndex: 'phone',
+      key: 'phone',
+    },
+    {
+      title: 'title',
+      dataIndex: 'title',
+      key: 'title',
+    },
+    {
+      title: 'role',
+      dataIndex: 'role',
+      key: 'role',
     },
 
     {
@@ -46,6 +60,8 @@ const index = ({ students, dispatch }) => {
       ),
     },
   ];
+  const [method, setMethod] = useState('');
+  const [modalTitle, setModalTitle] = useState('');
   const [visible, setVisible] = useState(false);
   const [confirmVisible, setconfirmVisible] = useState(false);
   const [record, setRecord] = useState({});
@@ -53,14 +69,12 @@ const index = ({ students, dispatch }) => {
   const [modalText, setModalText] = useState('删除该条记录？');
   const handleConfirmOk = () => {
     const id = record.id;
-
-    // setVisible(false);
     setModalText('正在删除......');
     setConfirmLoading(true);
     dispatch({
       type: 'students/delete',
       payload: {
-        id
+        id,
       },
     })
       .then(() => {
@@ -72,9 +86,11 @@ const index = ({ students, dispatch }) => {
         console.log(err);
       });
   };
-  const handleRecord = (record) => {
+  const handleRecord = (recor) => {
+    setModalTitle('编辑');
+    setMethod('edit');
     setVisible(true);
-    setRecord(record);
+    setRecord(recor);
   };
   const deleteRecord = (record) => {
     setconfirmVisible(true);
@@ -83,31 +99,80 @@ const index = ({ students, dispatch }) => {
   const handleConfirmCancel = () => {
     setconfirmVisible(false);
   };
-  const handleOk = () => {
-    setVisible(false);
-  };
   const handleCancel = () => {
     setVisible(false);
+    setRecord({
+      id: '',
+      name: '',
+      password: '',
+      email: '',
+      phone: '',
+      title: '',
+      role: '',
+    });
   };
-
+  const addNewRecord = () => {
+    setModalTitle('新增');
+    setMethod('add');
+    setVisible(true);
+  };
   const onFinish = (values) => {
     const id = record.id;
-    dispatch({
-      type: 'students/edit',
-      payload: {
-        id,
-        values,
-      },
-    });
+    if (method == 'edit') {
+      dispatch({
+        type: 'students/edit',
+        payload: {
+          id,
+          values,
+        },
+      })
+        .then(() => {
+          setRecord({
+            id: '',
+            name: '',
+            password: '',
+            email: '',
+            phone: '',
+            title: '',
+            role: '',
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else if (method == 'add') {
+      dispatch({
+        type: 'students/addNew',
+        payload: {
+          values,
+        },
+      })
+        .then(() => {
+          setRecord({
+            id: '',
+            name: '',
+            password: '',
+            email: '',
+            phone: '',
+            title: '',
+            role: '',
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
     setVisible(false);
   };
-
   return (
     <div>
+      <Button type="primary" shape="round" onClick={addNewRecord}>
+        新增学生信息
+      </Button>
       <Table rowKey="id" columns={columns} dataSource={students.data} />
       <StudentModal
+        modalTitle={modalTitle}
         open={visible}
-        handleOk={handleOk}
         handleCancel={handleCancel}
         record={record}
         onFinish={onFinish}

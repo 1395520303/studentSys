@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import {Modal } from 'antd';
+import React from 'react';
+import { Modal } from 'antd';
 const App = (props) => {
-
   return (
     <Modal
       title="删除记录"
