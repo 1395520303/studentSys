@@ -86,11 +86,11 @@ const index = ({ students, dispatch }) => {
         console.log(err);
       });
   };
-  const handleRecord = (recor) => {
+  const handleRecord = (record) => {
     setModalTitle('编辑');
     setMethod('edit');
     setVisible(true);
-    setRecord(recor);
+    setRecord(record);
   };
   const deleteRecord = (record) => {
     setconfirmVisible(true);
